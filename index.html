@@ -81,7 +81,7 @@
       let   D2 = Math.abs(D1 * ((S1 - fp) / fp)) + Math.abs(2 * S1 * Math.tan(FOV));
 
       // perform the approximate marginal ray height analysis here as well
-      Dh  = Math.abs(2 * (f_system - B) * Math.tan(FOV));   // max image size at the primary vertex, from initial parameters
+      Dh  = Math.abs(2 * (f_system) * Math.tan(FOV));   // max image size at the primary vertex, from initial parameters
       Dh += Math.max(((Math.abs(D2) - Dh) * B / (B + S1)), 0);  // defocus at the primary vertex
 
       const Dep = D1 * m * (1 + β) / (m*m + β);  //??? - may be useful later
