@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gregorian vs. Cassegrain vs. Inverse Cassegrain</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1em;}
+    body { font-family: sans-serif; max-width: 720px; margin: auto; padding: 1em;}
     label, select, input, button { display: block; margin: .5em 0; }
     table { width: 100%; border-collapse: collapse; margin-top: 1em; }
     th, td { border: 1px solid #ccc; padding: .5em; text-align: right; }
+    .rm-dk { color: red; }
   </style>
 </head>
 <body>
@@ -104,7 +105,30 @@
 
       D2 = Math.abs(D2)
 
-      return { D2, r1, r2, S1, k1, k2, Dh };
+      // Petzval field curvature
+      let Rp = 0.5 / ((1.0 / r2) - (1.0 / r1));
+      // Median field curvature
+      let Rm = 0;
+       // Astigmatic field curvature
+      let Ra = 0;
+
+      if (branch === 'aplanat'){
+      Rm = (1.0 + η) * r1 * m**2 / (2.0 * (m+1) * (m**2 - ((m+1) * η)));
+      Ra = - (1 + η) * m * F_eff / ((m * (2*m + 1) + η)) * 180.0 / 3.1415;
+      }
+
+      if (branch === 'classical'){
+      Rm = (1.0 + η) * r1 * m**2 / (2.0 * ((m**2 - 2)*(m - η) + ((m+1) * m)));
+      Ra = - (1 + η) * m * F_eff / (m**2 + η) * 180.0 / 3.1415;
+      }
+
+      if (branch === 'dk'){
+      Rm = ((1 + η) * r1 * m**2) / (2 * ((m**2 - 2) * (m - η) + ((m + 1) * m * (m**2 - 1) * (m - η)**2 / (2 * m))));
+      Ra = (4 * (1 + η) * F_eff * m**2) / (-(m**4) + (4 + 2 * η) * m**3 + m**2 * (1 - η**2) + 2 * m * η + η**2) * 180.0 / 3.1415;
+      }
+
+
+      return { D2, r1, r2, S1, k1, k2, Dh, Rp, Rm, Ra};
     }
 
     document.getElementById('compute').addEventListener('click', () => {
@@ -133,6 +157,9 @@
       const fmt2  = v => v.toFixed(2);
       const fmt4  = v => v.toFixed(4);
 
+      // Check if Dall-Kirkham branch is selected
+      const isDK = branch === 'dk';
+
       document.getElementById('output').innerHTML = `
         <table>
           <tr>
@@ -145,17 +172,23 @@
             <th>k₁</th>
             <th>k₂</th>
             <th>Dh</th>
+            <th>Rm</th>
+            <th>Rp</th>
+            <th>Ra</th>
           </tr>
           <tr>
             <td>${fmt2(F_eff)}</td>
             <td>${fmt2(F1)}</td>
-            <td>${fmt2(p.D2)}</td>
+            <td>≈${fmt2(p.D2)}</td>
             <td>${fmt2(p.r1)}</td>
             <td>${fmt2(p.r2)}</td>
             <td>${fmt2(p.S1)}</td>
             <td>${fmt4(p.k1)}</td>
             <td>${fmt4(p.k2)}</td>
-            <td>${fmt2(p.Dh)}</td>
+            <td>≈${fmt2(p.Dh)}</td>
+            <td class="${isDK ? 'rm-dk' : ''}">${fmt2(p.Rm)}</td>
+            <td>${fmt2(p.Rp)}</td>
+            <td style="background-color: yellow">${fmt2(p.Ra)}</td>
           </tr>
         </table>
       `;
