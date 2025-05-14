@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gregorian vs. Cassegrain vs. Inverse Cassegrain</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1em;}
+    label, select, input, button { display: block; margin: .5em 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+    th, td { border: 1px solid #ccc; padding: .5em; text-align: right; }
+  </style>
+</head>
+<body>
+
+  <h1>Two-mirror telescope Calculator</h1>
+
+  <label>
+    Configuration:
+    <select id="mode">
+      <option value="gregorian">Gregorian</option>
+      <option value="cassegrain">Cassegrain</option>
+      <!-- <option value="inverse">Inverse Cassegrain</option> -->
+    </select>
+  </label>
+
+
+    <label>
+    Branch:
+    <select id="branch">
+      <option value="aplanat">Aplanatic (coma-free)</option>
+      <option value="classical">Classical (k1 = -1) </option>
+      <option value="dk">Dall-Kirkham (k2 = 0)</option>
+    </select>
+  </label>
+
+  <label>
+    Primary Diameter D₁ (mm):
+    <input type="number" id="D1" value="150" step="any"/>
+  </label>
+
+  <label>
+    Backfocus B (mm):
+    <input type="number" id="B" value="150" step="any"/>
+  </label>
+
+  <label>
+    Diameter of the vigneting-free FOV (°):
+    <input type="number" id="FOV" value="0.5" step="any"/>
+  </label>
+
+  <label>
+    System focal ratio:
+    <input type="number" id="F_eff" value="15.0" step="any"/>
+  </label>
+
+  <label>
+    Focal ratio of the primary mirror F<sub>1</sub>:
+    <input type="number" id="F1" value="3.0" step="any"/>
+  </label>
+
+  <button id="compute">Compute</button>
+
+  <div id="output"></div>
+
+  <script>
+    function design(D1, F_eff, F1, B, FOVdeg, branch, mode) {
+      const FOV = FOVdeg * Math.PI / 360;
+      const fp = D1 * F1;
+      const f_system = D1 * F_eff;
+      const m  = F_eff / F1;
+
+      const η = B / D1;
+      const β = B / fp;
+
+      const S1 = F1 * (-B + (D1 * F_eff)) / (F1 + F_eff);
+      const r1 = -2 * D1 * F1;
+      const r2 = 2 * F1 * F_eff * (B + D1 * F1) / (F1**2 - F_eff**2);
+
+      // use approximate marginal ray height instead
+      let   D2 = Math.abs(D1 * ((S1 - fp) / fp)) + Math.abs(2 * S1 * Math.tan(FOV));
+
+      // perform the approximate marginal ray height analysis here as well
+      Dh  = Math.abs(2 * f_system * Math.tan(FOV));   // max sensor size, from initial parameters
+      Dh += Math.max(((Math.abs(D2) - Dh) * B / (B + S1)), 0);  // increase in such a way that the entire secondary is visible
+
+      const Dep = D1 * m * (1 + β) / (m*m + β);  //??? - may be useful later
+      const eps = Math.max(Math.abs(D2/D1), Math.abs(Dh/Dep));
+
+      let k1 = 0;
+      let k2 = 0;
+
+      if (branch === 'aplanat'){
+          k1 = -2*(F1+η)/(m*m*(F_eff-η)) - 1;
+          k2 = -(((2*F_eff*(m+1))/((m-1)**3*(F_eff-η))) + (4*m/((m-1)*(m-1)))) - 1;
+      } else if (branch === "classical") {
+          k1 = -1;
+          k2 = - (((m+1)**2) / ((m-1)**2));
+      } else if (branch === "dk") {
+          k2 = 0;
+          if (mode === 'cassegrain'){k1 = -1 + (((D2/D1) * (m-1) * (m+1)**2) / (m**3));
+          } else if (mode === 'gregorian') {k1 = -1 - (((D2/D1) * (m-1) * (m+1)**2) / (m**3));}
+      }
+
+      D2 = Math.abs(D2)
+
+      return { D2, r1, r2, S1, k1, k2, Dh };
+    }
+
+    document.getElementById('compute').addEventListener('click', () => {
+      const D1   = parseFloat(document.getElementById('D1').value);
+      const B    = parseFloat(document.getElementById('B').value);
+      const FOV  = parseFloat(document.getElementById('FOV').value);
+      let   F_eff = parseFloat(document.getElementById('F_eff').value);
+      let   F1   = parseFloat(document.getElementById('F1').value);
+
+      const mode = document.getElementById('mode').value;
+      const branch = document.getElementById('branch').value;
+
+      // apply mode-specific sign flips
+      if (mode === 'gregorian') {
+        F_eff = -Math.abs(F_eff);
+      } else if (mode === 'inverse') {
+        F1 = -Math.abs(F1);
+      }
+      // cassegrain → no change
+
+      const p = design(D1, F_eff, F1, B, FOV, branch, mode);
+
+      F_eff = Math.abs(F_eff)
+
+      // formatting
+      const fmt2  = v => v.toFixed(2);
+      const fmt4  = v => v.toFixed(4);
+
+      document.getElementById('output').innerHTML = `
+        <table>
+          <tr>
+            <th>F/#</th>
+            <th>F₁/#</th>
+            <th>D₂</th>
+            <th>r₁</th>
+            <th>r₂</th>
+            <th>S₁</th>
+            <th>k₁</th>
+            <th>k₂</th>
+            <th>Dh</th>
+          </tr>
+          <tr>
+            <td>${fmt2(F_eff)}</td>
+            <td>${fmt2(F1)}</td>
+            <td>${fmt2(p.D2)}</td>
+            <td>${fmt2(p.r1)}</td>
+            <td>${fmt2(p.r2)}</td>
+            <td>${fmt2(p.S1)}</td>
+            <td>${fmt4(p.k1)}</td>
+            <td>${fmt4(p.k2)}</td>
+            <td>${fmt2(p.Dh)}</td>
+          </tr>
+        </table>
+      `;
+    });
+  </script>
+
+</body>
+</html>
