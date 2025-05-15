@@ -32,6 +32,8 @@
       <option value="aplanat">Aplanatic (coma-free)</option>
       <option value="classical">Classical (k1 = -1) </option>
       <option value="dk">Dall-Kirkham (k2 = 0)</option>
+      <option value="anastigmat">Anastigmatic [WIP]</option>
+      <option value="flat">Flat-field [WIP]</option>
     </select>
   </label>
 
@@ -82,7 +84,7 @@
       let   D2 = Math.abs(D1 * ((S1 - fp) / fp)) + Math.abs(2 * S1 * Math.tan(FOV));
 
       // perform the approximate marginal ray height analysis here as well
-      Dh  = Math.abs(2 * (f_system) * Math.tan(FOV));   // max image size at the primary vertex, from initial parameters
+      let Dh  = Math.abs(2 * (f_system) * Math.tan(FOV));   // max image size at the primary vertex, from initial parameters
       Dh += Math.max(((Math.abs(D2) - Dh) * B / (B + S1)), 0);  // defocus at the primary vertex
 
       const Dep = D1 * m * (1 + β) / (m*m + β);  //??? - may be useful later
@@ -101,6 +103,28 @@
           k2 = 0;
           if (mode === 'cassegrain'){k1 = -1 + (((D2/D1) * (m-1) * (m+1)**2) / (m**3));
           } else if (mode === 'gregorian') {k1 = -1 - (((D2/D1) * (m-1) * (m+1)**2) / (m**3));}
+      }
+
+      else if (branch === "anastigmat") {
+          k1 = (-(m**4) + 2*m**3*η - m**2*η**2 + 4*m**2*η + 4*m**2 + 4*η**2 + 4*η) / (m**2 * (m - η)**2);
+          k2 = -(m + 1)*(m**4 - 2*m**3*η - 4*m**3 + m**2*η**2 - m**2 - 2*m*η - η**2)/((m - 1)**3*(m - η)**2);
+      }
+
+      else if (branch === "flat") {
+          k1 = (
+  -(m**4)
+  + 4*m**3*η
+  + 2*m**3
+  - 3*m**2*η**2
+  + 2*m**2
+  - 2*m*η
+  - 2*m
+  + 4*η**2
+  + 4*η
+) / (
+  m**2 * (m - η)**2
+);
+          k2 = (m + 1)*(m**4 + 2*m**3 - m**2*η**2 - m**2 + 2*m*η + η**2)/((m - 1)**3*(m - η)**2);
       }
 
       D2 = Math.abs(D2)
