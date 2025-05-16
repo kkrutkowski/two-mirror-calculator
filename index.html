@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Two-mirror telescope Calculator</title>
+  <title>Two-Mirror Telescope calculator</title>
   <style>
     body { font-family: sans-serif; max-width: 720px; margin: auto; padding: 1em;}
     label, select, input, button { display: block; margin: .5em 0; }
     table { width: 100%; border-collapse: collapse; margin-top: 1em; }
     th, td { border: 1px solid #ccc; padding: .5em; text-align: right; }
-    .rm-dk { color: red; }
+    .Cm-dk { color: red; }
   </style>
 </head>
 <body>
@@ -83,7 +83,7 @@
       // use approximate marginal ray height instead
       let   D2 = Math.abs(D1 * ((S1 - fp) / fp)) + Math.abs(2 * S1 * Math.tan(FOV));
 
-      // perform the approximate marginal ray height analysis here as well
+      // perfoCm the approximate marginal ray height analysis here as well
       let Dh  = Math.abs(2 * (f_system) * Math.tan(FOV));   // max image size at the primary vertex, from initial parameters
       Dh += Math.max(((Math.abs(D2) - Dh) * B / (B + S1)), 0);  // defocus at the primary vertex
 
@@ -118,29 +118,29 @@
       D2 = Math.abs(D2)
 
       // Petzval field curvature
-      let Rp = 0.5 / ((1.0 / r2) - (1.0 / r1));
+      let Cp = 1000 / (0.5 / ((1.0 / r2) - (1.0 / r1)));
       // Median field curvature
-      let Rm = 0;
+      let Cm = 0;
        // Astigmatic field curvature
       let Ra = 0;
 
       if (branch === 'aplanat'){
-      Rm = (1.0 + η) * r1 * m**2 / (2.0 * (m+1) * (m**2 - ((m+1) * η)));
+      Cm = 1000 / ((1.0 + η) * r1 * m**2 / (2.0 * (m+1) * (m**2 - ((m+1) * η))));
       Ra = - (1 + η) * m * F_eff / ((m * (2*m + 1) + η)) * 180.0 / 3.1415;
       }
 
       if (branch === 'classical'){
-      Rm = (1.0 + η) * r1 * m**2 / (2.0 * ((m**2 - 2)*(m - η) + ((m+1) * m)));
+      Cm = 1000 / ((1.0 + η) * r1 * m**2 / (2.0 * ((m**2 - 2)*(m - η) + ((m+1) * m))));
       Ra = - (1 + η) * m * F_eff / (m**2 + η) * 180.0 / 3.1415;
       }
 
       if (branch === 'dk'){
-      Rm = ((1 + η) * r1 * m**2) / (2 * ((m**2 - 2) * (m - η) + ((m + 1) * m * (m**2 - 1) * (m - η)**2 / (2 * m))));
+      Cm = 1000 / (((1 + η) * r1 * m**2) / (2 * ((m**2 - 2) * (m - η) + ((m + 1) * m * (m**2 - 1) * (m - η)**2 / (2 * m)))));
       Ra = (4 * (1 + η) * F_eff * m**2) / (-(m**4) + (4 + 2 * η) * m**3 + m**2 * (1 - η**2) + 2 * m * η + η**2) * 180.0 / 3.1415;
       }
 
 
-      return { D2, r1, r2, S1, k1, k2, Dh, Rp, Rm, Ra};
+      return { D2, r1, r2, S1, k1, k2, Dh, Cp, Cm, Ra};
     }
 
     document.getElementById('compute').addEventListener('click', () => {
@@ -165,7 +165,7 @@
 
       F_eff = Math.abs(F_eff)
 
-      // formatting
+      // foCmatting
       const fmt2  = v => v.toFixed(2);
       const fmt4  = v => v.toFixed(4);
 
@@ -175,7 +175,7 @@
       document.getElementById('output').innerHTML = `
         <div class="tables-container">
           <table>
-            <caption>Secondary and Tertiary Design Parameters</caption>
+            <caption>Secondary Design Parameters</caption>
             <tr>
               <th>F/#</th>
               <th>F₁/#</th>
@@ -203,12 +203,12 @@
           <table>
             <caption>Aberration Coefficients</caption>
             <tr>
-              <th>Rm</th>
-              <th>Rp</th>
+              <th>Cm [1/m]</th>
+              <th>Cp [1/m]</th>
             </tr>
             <tr>
-              <td class="${isDK ? 'rm-dk' : ''}">${fmt2(p.Rm)}</td>
-              <td>${fmt2(p.Rp)}</td>
+              <td class="${isDK ? 'Cm-dk' : ''}">${fmt2(p.Cm)}</td>
+              <td>${fmt2(p.Cp)}</td>
             </tr>
           </table>
         </div>
