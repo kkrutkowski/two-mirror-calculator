@@ -167,7 +167,8 @@
       const fmt4  = v => v.toFixed(4);
 
       // Check if Dall-Kirkham branch is selected
-      const isDK = branch === 'dk';
+      //const isDK = branch === 'dk';
+      //<td class="${isDK ? 'Cm-dk' : ''}">${fmt2(p.Cm)}</td>
 
       document.getElementById('output').innerHTML = `
         <div class="tables-container">
@@ -204,7 +205,7 @@
               <th>Cp [1/m]</th>
             </tr>
             <tr>
-              <td class="${isDK ? 'Cm-dk' : ''}">${fmt2(p.Cm)}</td>
+              <td>${fmt2(p.Cm)}</td>
               <td>${fmt2(p.Cp)}</td>
             </tr>
           </table>
