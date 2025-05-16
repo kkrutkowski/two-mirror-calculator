@@ -31,8 +31,8 @@
       <option value="aplanat">Aplanatic (coma-free)</option>
       <option value="classical">Classical (k1 = -1) </option>
       <option value="dk">Dall-Kirkham (k2 = 0)</option>
-      <option value="anastigmat">Anastigmatic [WIP]</option>
-      <option value="flat">Flat-field [WIP]</option>
+      <option value="anastigmat">Anastigmatic </option>
+      <option value="flat">Flat-field </option>
     </select>
   </label>
 
@@ -118,18 +118,15 @@
 
       // Coma
       let Cc = (10**6) * (1 + (((k1 + 1) * (m - β) * m**2) / (2 * (1 + β)))) / (4 * (f_system)**2);
-
       // Astigmatism
-      let Ca= 0;
-
+      let Ac= 1000 * (((m**2 + β) / (m * (1 + β))) - ((m * (k1 + 1) * (m - β)**2) / (4 * (1 + β)**2))) / (2 * f_system);
       // Petzval field curvature
       let Cp = 1000 / (0.5 / ((1.0 / r2) - (1.0 / r1)));
       // Median field curvature
-      //let Cm = 0;
       let Cm = - 1000 * ((m * (m-β)) * (1 - (2 / m**2) + ((m+1) / (m*(m-β))) - (((m-β)*(k1+1)) / (2*(β+1))))) / (f_system * (1 + β));
 
 
-      return { D2, r1, r2, S1, k1, k2, Dh, Cc, Cp, Cm, Ca};
+      return {D2, r1, r2, S1, k1, k2, Dh, Cc, Ac, Cp, Cm};
     }
 
     document.getElementById('compute').addEventListener('click', () => {
@@ -164,28 +161,32 @@
       document.getElementById('output').innerHTML = `
         <div class="tables-container">
           <table>
-            <caption>Secondary Design Parameters</caption>
+            <caption>Secondary and Tertiary Design Parameters</caption>
             <tr>
               <th>F/#</th>
               <th>F₁/#</th>
-              <th>D₂</th>
-              <th>r₁</th>
-              <th>r₂</th>
-              <th>S₁</th>
+              <th>r₁ [mm]</th>
+              <th>f₁ [mm]</th>
+              <th>Dh [mm]</th>
+              <th>S₁ [mm]</th>
               <th>k₁</th>
               <th>k₂</th>
-              <th>Dh</th>
+              <th>r₂ [mm]</th>
+              <th>f₂ [mm]</th>
+              <th>D₂ [mm]</th>
             </tr>
             <tr>
               <td>${fmt2(F_eff)}</td>
               <td>${fmt2(F1)}</td>
-              <td>≈${fmt2(p.D2)}</td>
               <td>${fmt2(p.r1)}</td>
-              <td>${fmt2(p.r2)}</td>
-              <td>${fmt2(p.S1)}</td>
+              <td>${fmt2(-0.5 * p.r1)}</td>
+              <td>≈${fmt2(p.Dh)}</td>
+              <td>-${fmt2(p.S1)}</td>
               <td>${fmt4(p.k1)}</td>
               <td>${fmt4(p.k2)}</td>
-              <td>≈${fmt2(p.Dh)}</td>
+              <td>${fmt2(p.r2)}</td>
+              <td>${fmt2(0.5 * p.r2)}</td>
+              <td>≈${fmt2(p.D2)}</td>
             </tr>
           </table>
 
@@ -193,11 +194,13 @@
             <caption>Aberration Coefficients</caption>
             <tr>
               <th>Cc [1/m²]</th>
+              <th>Ac [1/m]</th>
               <th>Cm [1/m]</th>
               <th>Cp [1/m]</th>
             </tr>
             <tr>
               <td>${fmt2(p.Cc)}</td>
+              <td>${fmt2(p.Ac)}</td>
               <td>${fmt2(p.Cm)}</td>
               <td>${fmt2(p.Cp)}</td>
             </tr>
