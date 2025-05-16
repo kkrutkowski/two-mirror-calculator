@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gregorian vs. Cassegrain vs. Inverse Cassegrain</title>
+  <title>Two-mirror telescope Calculator</title>
   <style>
     body { font-family: sans-serif; max-width: 720px; margin: auto; padding: 1em;}
     label, select, input, button { display: block; margin: .5em 0; }
@@ -173,36 +173,45 @@
       const isDK = branch === 'dk';
 
       document.getElementById('output').innerHTML = `
-        <table>
-          <tr>
-            <th>F/#</th>
-            <th>F₁/#</th>
-            <th>D₂</th>
-            <th>r₁</th>
-            <th>r₂</th>
-            <th>S₁</th>
-            <th>k₁</th>
-            <th>k₂</th>
-            <th>Dh</th>
-            <th>Rm</th>
-            <th>Rp</th>
-            <th>Ra</th>
-          </tr>
-          <tr>
-            <td>${fmt2(F_eff)}</td>
-            <td>${fmt2(F1)}</td>
-            <td>≈${fmt2(p.D2)}</td>
-            <td>${fmt2(p.r1)}</td>
-            <td>${fmt2(p.r2)}</td>
-            <td>${fmt2(p.S1)}</td>
-            <td>${fmt4(p.k1)}</td>
-            <td>${fmt4(p.k2)}</td>
-            <td>≈${fmt2(p.Dh)}</td>
-            <td class="${isDK ? 'rm-dk' : ''}">${fmt2(p.Rm)}</td>
-            <td>${fmt2(p.Rp)}</td>
-            <td style="background-color: yellow">${fmt2(p.Ra)}</td>
-          </tr>
-        </table>
+        <div class="tables-container">
+          <table>
+            <caption>Secondary and Tertiary Design Parameters</caption>
+            <tr>
+              <th>F/#</th>
+              <th>F₁/#</th>
+              <th>D₂</th>
+              <th>r₁</th>
+              <th>r₂</th>
+              <th>S₁</th>
+              <th>k₁</th>
+              <th>k₂</th>
+              <th>Dh</th>
+            </tr>
+            <tr>
+              <td>${fmt2(F_eff)}</td>
+              <td>${fmt2(F1)}</td>
+              <td>≈${fmt2(p.D2)}</td>
+              <td>${fmt2(p.r1)}</td>
+              <td>${fmt2(p.r2)}</td>
+              <td>${fmt2(p.S1)}</td>
+              <td>${fmt4(p.k1)}</td>
+              <td>${fmt4(p.k2)}</td>
+              <td>≈${fmt2(p.Dh)}</td>
+            </tr>
+          </table>
+
+          <table>
+            <caption>Aberration Coefficients</caption>
+            <tr>
+              <th>Rm</th>
+              <th>Rp</th>
+            </tr>
+            <tr>
+              <td class="${isDK ? 'rm-dk' : ''}">${fmt2(p.Rm)}</td>
+              <td>${fmt2(p.Rp)}</td>
+            </tr>
+          </table>
+        </div>
       `;
     });
   </script>
