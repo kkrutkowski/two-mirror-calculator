@@ -116,27 +116,20 @@
 
       D2 = Math.abs(D2)
 
+      // Coma
+      let Cc = (10**6) * (1 + (((k1 + 1) * (m - β) * m**2) / (2 * (1 + β)))) / (4 * (f_system)**2);
+
+      // Astigmatism
+      let Ca= 0;
+
       // Petzval field curvature
       let Cp = 1000 / (0.5 / ((1.0 / r2) - (1.0 / r1)));
       // Median field curvature
+      //let Cm = 0;
       let Cm = - 1000 * ((m * (m-β)) * (1 - (2 / m**2) + ((m+1) / (m*(m-β))) - (((m-β)*(k1+1)) / (2*(β+1))))) / (f_system * (1 + β));
-       // Astigmatic field curvature
-      let Ra = 0;
-
-      if (branch === 'aplanat'){
-      Ra = - (1 + η) * m * F_eff / ((m * (2*m + 1) + η)) * 180.0 / 3.1415;
-      }
-
-      if (branch === 'classical'){
-      Ra = - (1 + η) * m * F_eff / (m**2 + η) * 180.0 / 3.1415;
-      }
-
-      if (branch === 'dk'){
-      Ra = (4 * (1 + η) * F_eff * m**2) / (-(m**4) + (4 + 2 * η) * m**3 + m**2 * (1 - η**2) + 2 * m * η + η**2) * 180.0 / 3.1415;
-      }
 
 
-      return { D2, r1, r2, S1, k1, k2, Dh, Cp, Cm, Ra};
+      return { D2, r1, r2, S1, k1, k2, Dh, Cc, Cp, Cm, Ca};
     }
 
     document.getElementById('compute').addEventListener('click', () => {
@@ -166,8 +159,7 @@
       const fmt4  = v => v.toFixed(4);
 
       // Check if Dall-Kirkham branch is selected
-      //const isDK = branch === 'dk';
-      //<td class="${isDK ? 'Cm-dk' : ''}">${fmt2(p.Cm)}</td>
+      const isDK = branch === 'dk';
 
       document.getElementById('output').innerHTML = `
         <div class="tables-container">
@@ -200,10 +192,12 @@
           <table>
             <caption>Aberration Coefficients</caption>
             <tr>
+              <th>Cc [1/m²]</th>
               <th>Cm [1/m]</th>
               <th>Cp [1/m]</th>
             </tr>
             <tr>
+              <td>${fmt2(p.Cc)}</td>
               <td>${fmt2(p.Cm)}</td>
               <td>${fmt2(p.Cp)}</td>
             </tr>
