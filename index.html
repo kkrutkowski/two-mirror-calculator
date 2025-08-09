@@ -83,8 +83,10 @@
       let   D2 = Math.abs(D1 * ((S1 - fp) / fp)) + Math.abs(2 * S1 * Math.tan(FOV));
 
       // perfoCm the approximate marginal ray height analysis here as well
-      let Dh  = Math.abs(2 * (f_system) * Math.tan(FOV));   // max image size at the primary vertex, from initial parameters
-      Dh += Math.max(((Math.abs(D2) - Dh) * Math.abs(B) / (Math.abs(B) + Math.abs(S1))), 0);  // defocus at the primary vertex
+      // let Dh  = Math.abs(2 * (f_system) * Math.tan(FOV));   // max image size at the primary vertex, from initial parameters
+      // Dh += Math.max(((Math.abs(D2) - Dh) * Math.abs(B) / (Math.abs(B) + Math.abs(S1))), 0);  // defocus at the primary vertex
+
+      let Dh = D2 * B / S1;   // make the entire secondary mirror visible from the center of the focal plane
 
       const Dep = D1 * m * (1 + β) / (m*m + β);  //??? - may be useful later
       const eps = Math.max(Math.abs(D2/D1), Math.abs(Dh/Dep));
