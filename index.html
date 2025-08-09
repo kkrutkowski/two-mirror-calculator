@@ -9,6 +9,12 @@
     label, select, input, button { display: block; margin: .5em 0; }
     table { width: 100%; border-collapse: collapse; margin-top: 1em; }
     th, td { border: 1px solid #ccc; padding: .5em; text-align: right; }
+    #legend { margin: 1em 0; border: 1px solid #e0e0e0; padding: .6em; border-radius: 6px; background: #fbfbfb; }
+    #legend summary { cursor: pointer; margin: 0; padding: 0 .2em; }
+    #legend dl { display: grid; grid-template-columns: 150px 1fr; gap: .25rem .75rem; align-items: start; }
+    #legend dt { font-weight: 600; text-align: right; }
+    #legend dd { margin: 0; }
+    #legend hr { grid-column: 1 / -1; border: none; border-top: 1px dashed #ddd; margin: .5em 0; }
   </style>
 </head>
 <body>
@@ -62,6 +68,36 @@
   </label>
 
   <button id="compute">Compute</button>
+
+  <!-- Legend (place before the output div) -->
+<details id="legend">
+  <summary><strong>Legend </strong></summary>
+  <dl>
+    <dt>F/#</dt><dd>System's effective focal ratio</dd>
+    <dt>F₁/#</dt><dd>Focal ratio of the primary mirror</dd>
+
+    <dt>r₁</dt><dd>Vertex radius of curvature of the primary mirror</dd>
+    <dt>f₁</dt><dd>Focal length of the primary mirror</dd>
+
+    <dt>Dh</dt><dd>Diameter of the hole in the primary mirror</dd>
+    <dt>S₁</dt><dd>Mirror separation (primary ↔ secondary)</dd>
+
+    <dt>k₁</dt><dd>Conic constant of the primary mirror</dd>
+    <dt>k₂</dt><dd>Conic constant of the secondary mirror</dd>
+
+    <dt>r₂</dt><dd>Radius of curvature of the secondary mirror</dd>
+    <dt>f₂</dt><dd>Focal length of the secondary mirror</dd>
+    <dt>D₂</dt><dd>Diameter of the secondary mirror</dd>
+
+    <hr/>
+
+    <dt>Cc</dt><dd>3rd order coma coefficient</dd>
+    <dt>Ac</dt><dd>3rd order astigmatism coefficient</dd>
+    <dt>Cp</dt><dd>Petzval field curvature</dd>
+    <dt>Cm</dt><dd>Median 3rd order field curvature</dd>
+  </dl>
+</details>
+
 
   <div id="output"></div>
 
