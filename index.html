@@ -15,7 +15,20 @@
     #legend dt { font-weight: 600; text-align: right; }
     #legend dd { margin: 0; }
     #legend hr { grid-column: 1 / -1; border: none; border-top: 1px dashed #ddd; margin: .5em 0; }
+
+    #equations { margin: 1em 0; border: 1px solid #e0e0e0; padding: .6em; border-radius: 6px; background: #fbfbfb; }
+    #equations summary { cursor: pointer; margin: 0; padding: 0 .2em; }
+    #equations .eq-list { display:block; }
+
   </style>
+<!-- MathJax: put this in <head> so LaTeX renders in the Equations panel -->
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
 
@@ -96,6 +109,21 @@
     <dt>Cp</dt><dd>Petzval field curvature</dd>
     <dt>Cm</dt><dd>Median 3rd order field curvature</dd>
   </dl>
+</details>
+<!-- Equations (paste this directly after the legend details, before <div id="output">) -->
+<details id="equations">
+  <summary><strong>Equations</strong></summary>
+  <div class="eq-list" style="margin-top:.5em; line-height:1.4;">
+    <p><em>Initial equation:</em></p>
+    <!-- use \( ... \) or $$ ... $$ for LaTeX once MathJax is included -->
+    <p>\(C_m = C_p - 4\,A_c\)</p>
+
+    <hr style="border:none; border-top:1px dashed #ddd; margin:.6em 0;"/>
+
+    <p style="font-size:.95em; color:#444;">
+      Add more equations below. Use \( ... \) for inline math or \[ ... \] / $$ ... $$ for displayed math.
+    </p>
+  </div>
 </details>
 
 
