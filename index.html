@@ -119,13 +119,13 @@ window.MathJax = {
     <p>\(C_m = C_p - 4\,A_c\)</p>
 
     <hr style="border:none; border-top:1px dashed #ddd; margin:.6em 0;"/>
-    
+
     <!--
     <p style="font-size:.95em; color:#444;">
       Add more equations below. Use \( ... \) for inline math or \[ ... \] / $$ ... $$ for displayed math.
     </p>
     -->
-    
+
   </div>
 </details>
 
@@ -168,9 +168,13 @@ window.MathJax = {
           k1 = -1;
           k2 = - (((m+1)**2) / ((m-1)**2));
       } else if (branch === "dk") {
+          // EXACT Dall-Kirkham conic (k2 = 0, W_040 = 0), derived from the
+          // spherical Seidel S_I of the two-mirror layout:
+          //     k1 = (1+β)(m^2-1)/m^3 - 1      (signed m covers both modes)
+          // Replaces the previous approximation -1 ± (D2/D1)(m-1)(m+1)^2/m^3,
+          // which depended on the obstruction ratio D2/D1 (field-dependent).
           k2 = 0;
-          if (mode === 'cassegrain'){k1 = -1 + (((D2/D1) * (m-1) * (m+1)**2) / (m**3));
-          } else if (mode === 'gregorian') {k1 = -1 - (((D2/D1) * (m-1) * (m+1)**2) / (m**3));}
+          k1 = ((1 + β) * (m*m - 1)) / (m*m*m) - 1;
       }
 
       else if (branch === "anastigmat") {
